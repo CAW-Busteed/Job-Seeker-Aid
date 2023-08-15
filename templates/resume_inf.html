@@ -1,0 +1,39 @@
+<!--This is a comment. Comments are not displayed in the browser-->
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <title>Resume Output</title>
+</head>
+
+<body>
+    <h3>Skills</h3>
+    <tr>
+        {% for skills in skills %}
+        <td>{{skills.soft_skills}}</td>
+        <!--<td>{{skills.hard_skills}}</td>--->
+        {% end for %}
+    </tr>
+
+    <h3>Job History</h3>
+    {% for jobs in jobs %}
+    <h5>{{jobs.job}}</h5>
+    <h6>{{jobs.start_date}} to {{jobs.end_date}}</h6>
+    <tr>
+        {% for experiences in experiences %}
+        <td>{{experiences.summary}}</td>
+        {% end for %}
+    </tr>
+    {% end for %}
+
+    <h3>Projects</h3>
+    {% for projects in projects %}
+    <h5>{{projects.project}}</h5>
+    <p>{{projects.explanation}}</p>
+    {% end for %}
+</body>
+
+</html>
