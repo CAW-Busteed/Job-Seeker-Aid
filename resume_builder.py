@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-# import customtkinter
 import db_main
 from cs50 import SQL
 
@@ -13,9 +12,6 @@ app = tk.Tk()
 app.geometry("1480x960")
 app.title("Resume Builder")
 
-#colors/style
-# customtkinter.set_appearance_mode("system")
-# customtkinter.set_default_color_theme("green")
 TITLE = ("Calibri", 25)
 
 class tkinterApp(tk.Tk):
@@ -71,10 +67,10 @@ class StartPage(tk.Frame):
         start_date=tk.StringVar()
         end_date=tk.StringVar()
         exp=tk.StringVar()
-        skill= tk.StringVar()
-        project= tk.StringVar() #add option to connect to job
-        project_desc= tk.StringVar()
-        startmonth= tk.StringVar()
+        # skill= tk.StringVar()
+        # project= tk.StringVar() #add option to connect to job
+        # project_desc= tk.StringVar()
+        # startmonth= tk.StringVar()
 
         #job input fields
         link_1=ttk.Entry(app, width=400, height= 40, placeholder_text="Job Title", textvariable=job)
@@ -118,8 +114,7 @@ class StartPage(tk.Frame):
 
         job_button.grid(row=3, column=2, padx=20, pady=20)
   
-        button1 = ttk.Button(app, text ="Craft Custom Job Features",
-        command = lambda : controller.show_frame(Page1))
+        
 
         '''
         #smaller input fields for skills and projects
@@ -140,6 +135,8 @@ class StartPage(tk.Frame):
         finish_button = ttk.Button(app, "Finished", command=switch())
         finish_button.pack()
         '''
+        button1 = ttk.Button(app, text ="Craft Custom Job Features",
+        command = lambda : controller.show_frame(Page1))
 
         # putting the button in its place by
         # using grid

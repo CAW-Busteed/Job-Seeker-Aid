@@ -101,11 +101,12 @@ def build_resume(project_ids, skill_ids, job_ids, db):
     #relevant project
     projects = db.execute("SELECT project, explanation FROM projects WHERE id in ?", project_ids)
 
-    return render_template("resume_inf.html", skills = skills, jobs = jobs, experiences = experiences, projects = projects)
+    #return render_template("resume_inf.html", skills = skills, jobs = jobs, experiences = experiences, projects = projects)
+    return skills, jobs, experiences, projects
 
 def output_resume(desc, db):
     projects, skills, jobs = read_listing(desc, db)
-    build_resume(projects, skills, jobs)
+    build_resume(projects, skills, jobs, db)
 
 def build_coverletter():        #not in use yet
     #take a frame

@@ -62,11 +62,21 @@ def test_add_job_history(db):
     end="May 2014"
     experiences= ["Organized layouts and structure of the Boston Tribune Newsletter.", "Authored over 300 pages of content over my career.", "Took steps to move onto a digital format."]
     db_main.add_job_history(job, start, end, experiences, db)
-    test = db.execute("SELECT job FROM jobs where id=?", 1)
+    test = (db.execute("SELECT job FROM jobs where id=?", 1))[0]['job']
     assert job==test 
 
-def test_add_skills():
-    assert db_main.add_skills() == True
+def test_read_listing(db):
+    listing = ''
+    projects, skills, jobs = db_main.read_listing(listing, db)
+    assert jobs == []
 
-def test_request_information():
-    assert db_main.request_information() == True
+def test_build_resume(db):
+    job="Assistant Editor"
+    start="March 2010"
+    end="May 2014"
+    zexperiences= ["Organized layouts and structure of the Boston Tribune Newsletter.", "Authored over 300 pages of content over my career.", "Took steps to move onto a digital format."]
+    listing = ''
+    db_main.add_job_history(job, start, end, zexperiences, db)
+    project_ids, skill_ids, job_ids = db_main.read_listing(listing, db)
+    skills, jobs, experiences, projects = db_main.build_resume(project_ids, skill_ids, job_ids, db)
+    assert zexperiences[2] == experiences[0]
