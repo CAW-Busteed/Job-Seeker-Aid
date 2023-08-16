@@ -73,15 +73,15 @@ class StartPage(tk.Frame):
         # startmonth= tk.StringVar()
 
         #job input fields
-        link_1=ttk.Entry(app, width=400, height= 40, placeholder_text="Job Title", textvariable=job)
+        link_1=ttk.Entry(app, width=400, textvariable=job)
         position = ttk.Label(app, text= "Job Title: ")
-        link_2=ttk.Entry(app, width=140, height= 40, placeholder_text="Starting Month and Year", textvariable=start_date)
+        link_2=ttk.Entry(app, width=140, textvariable=start_date)
         #startmonth_drop = OptionMenu(app, startmonth, "January", "Febrary", "March", "April", "May",...)
         #startyear_drop = OptionMenu()
         #endmonth_drop = OptionMenu()
         #startyear_drop = OptionMenu()
         position2 =  ttk.Label(app, text= "Start Date: ")
-        link_3=ttk.Entry(app, width=140, height= 40, placeholder_text="Ending Month and Year", textvariable=end_date)
+        link_3=ttk.Entry(app, width=140, textvariable=end_date)
         position3 =  ttk.Label(app, text= "End Date: ")
         #TODO: L/M change date input fields to drop downs. 'OptionMenu' not working
 
@@ -93,8 +93,8 @@ class StartPage(tk.Frame):
         position3.grid(row=1, column=4, padx=20, pady=20)
 
         #big experience input field
-        add_experience = ttk.Entry(app, width=400, height= 80, placeholder_text="Add experiences. Use action verbs!", textvariable=exp)
-        position4 =  ttk.Label(app, text= "What you did: ")
+        add_experience = ttk.Entry(app, width=400, textvariable=exp)
+        position4 =  ttk.Label(app, text= "Add experiences, use action verbs: ")
         add_experience.grid(row=2, column=1, padx=20, pady=20)
         position4.grid(row=2, column=0, padx=20, pady=20)
 
@@ -109,11 +109,10 @@ class StartPage(tk.Frame):
 
         try:
             job_button = ttk.Button(app, text="Add Job", command= db_main.add_job_history(job, start_date, end_date, exp_place, db))
+            job_button.grid(row=3, column=2, padx=20, pady=20)
         except Exception as e:
             print("Error in db_main:", e)
 
-        job_button.grid(row=3, column=2, padx=20, pady=20)
-  
         
 
         '''
@@ -165,14 +164,15 @@ class Page1(tk.Frame):
         instruct.grid(row=2, column=0, padx=20, pady=20)
 
         job_description= tk.StringVar()
-        description=ttk.Entry(app, width=200, height= 400, textvariable=job_description)
+        description=ttk.Entry(app, width=200, textvariable=job_description)
         description.grid(row=2, column=1, padx=20, pady=20)
 
         try:
             description_button=ttk.Button(app, "Submit", command=db_main.output_resume(job_description, db))
+            description_button.grid(row=3, column=1, padx=20, pady=20)
         except Exception as e:
             print("Error in db_main:", e)
-        description_button.grid(row=3, column=1, padx=20, pady=20)
+        
 
 #run app
 if __name__ == "__main__":
