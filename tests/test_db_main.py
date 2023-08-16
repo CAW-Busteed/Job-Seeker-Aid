@@ -66,16 +66,21 @@ def test_add_job_history(db):
     assert job==test 
 
 def test_read_listing(db):
-    listing = ''
+    job="Assistant Editor"
+    start="March 2010"
+    end="May 2014"
+    experiences= ["Organized layouts and structure of the Boston Tribune Newsletter.", "Authored over 300 pages of content over my career.", "Took steps to move onto a digital format."]
+    db_main.add_job_history(job, start, end, experiences, db)
+    listing = 'Saint Josephs Medical Center is seeking an Outpatient Coding Supervisor to oversee its Health Information Management Department’s Outpatient Coding functions. The Supervisor must have an in depth knowledge of ICD 10 CM/PCS, CPT coding systems, 3m system encoder software and a thorough understanding of NCCI edits. Must have a Coding Credential 2-3 years Supervisory experience preferred Interested applicants should submit their resumes to: janice.cordola@saintjosephs.org Salary Range $65,000 to $70,000 annually '
     projects, skills, jobs = db_main.read_listing(listing, db)
-    assert jobs == []
+    assert jobs == ['1']
 
 def test_build_resume(db):
     job="Assistant Editor"
     start="March 2010"
     end="May 2014"
     zexperiences= ["Organized layouts and structure of the Boston Tribune Newsletter.", "Authored over 300 pages of content over my career.", "Took steps to move onto a digital format."]
-    listing = ''
+    listing = 'Saint Josephs Medical Center is seeking an Outpatient Coding Supervisor to oversee its Health Information Management Department’s Outpatient Coding functions. The Supervisor must have an in depth knowledge of ICD 10 CM/PCS, CPT coding systems, 3m system encoder software and a thorough understanding of NCCI edits. Must have a Coding Credential 2-3 years Supervisory experience preferred Interested applicants should submit their resumes to: janice.cordola@saintjosephs.org Salary Range $65,000 to $70,000 annually '
     db_main.add_job_history(job, start, end, zexperiences, db)
     project_ids, skill_ids, job_ids = db_main.read_listing(listing, db)
     skills, jobs, experiences, projects = db_main.build_resume(project_ids, skill_ids, job_ids, db)

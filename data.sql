@@ -24,3 +24,6 @@ INSERT INTO synonyms VALUES ('2', 'article');
 INSERT INTO synonyms VALUES ('2', 'authored');
 INSERT INTO synonyms VALUES ('2', 'content');
 INSERT INTO synonyms VALUES ('2', 'blog');
+INSERT INTO synonyms VALUES ('2', 'editor');
+INSERT INTO synonyms VALUES ('2', 'edit');
+INSERT INTO synonyms VALUES ('2', 'editing');

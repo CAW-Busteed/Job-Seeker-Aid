@@ -28,16 +28,15 @@ def read(text, db):
     for word in res:
         key_id = iterate_keys(word, db)
         if key_id != False:
-            keys.append(key_id)
-    #TODO:(H/L) account for duplicates or more common keys
-    keys = keys[0][0]['key_id']
+            keys.append(key_id[0]['key_id'])
+    #TODO:(H/L) account for duplicates or more common keys ^
     return keys
 
 # insert skills and job history into program
 def connect_experiences(experiences, db):
     key = []
     for x in experiences:
-        key.append(read(x, db))
+        key.append(read(x, db)[0])
     return key        
 
 def add_projects(job_id, job, project, description, db):      #not in use yet
@@ -54,6 +53,9 @@ def add_job_history(job, start, end, experiences, db):
     #input into TABLE:jobs via sql
     db.execute("INSERT INTO jobs (job, start_date, end_date) VALUES (?, ?, ?)", job, start, end)
     job_id = str((db.execute("SELECT id FROM jobs WHERE job= ?", job))[0]["id"])
+    job_key = read(job, db)
+    if len(job_key)>0:
+        db.execute("UPDATE jobs SET key_id = ? WHERE job = ?", job_key, job)
 
     #input string and job_id into TABLE: experiences
     key = connect_experiences(experiences, db)
@@ -69,19 +71,18 @@ def add_skills(skill, db):
 
 # Read job listing
 def read_listing(listing, db):
-    keys = []
     projects = []
     skills = []
     jobs = []
-    keys.append(read(listing, db))
+    keys = set(read(listing, db))
     for x in keys:
-        project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", x)
+        project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", str(x))
         for y in project_id:
             projects.append(y)
-        skill_id = db.execute("SELECT id FROM skills WHERE key_id = ?", x)
+        skill_id = db.execute("SELECT id FROM skills WHERE key_id = ?", str(x))
         for y in skill_id:
             skills.append(y)
-        job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", x)
+        job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", str(x))
         for y in job_id:
             jobs.append(y)
         # TODO: (L/L) add experiences
