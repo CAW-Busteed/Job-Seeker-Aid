@@ -54,7 +54,8 @@ def add_job_history(job, start, end, experiences, db):
     db.execute("INSERT INTO jobs (job, start_date, end_date) VALUES (?, ?, ?)", job, start, end)
     job_id = str((db.execute("SELECT id FROM jobs WHERE job= ?", job))[0]["id"])
     job_key = read(job, db)
-    if len(job_key)>0:
+    if len(job_key)==1:
+        job_key = str(job_key[0])
         db.execute("UPDATE jobs SET key_id = ? WHERE job = ?", job_key, job)
 
     #input string and job_id into TABLE: experiences
@@ -76,13 +77,13 @@ def read_listing(listing, db):
     jobs = []
     keys = set(read(listing, db))
     for x in keys:
-        project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", str(x))
-        for y in project_id:
-            projects.append(y)
-        skill_id = db.execute("SELECT id FROM skills WHERE key_id = ?", str(x))
-        for y in skill_id:
-            skills.append(y)
-        job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", str(x))
+        # project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", str(x))
+        # for y in project_id:
+        #     projects.append(y)
+        # skill_id = db.execute("SELECT id FROM skills WHERE key_id = ?", str(x))
+        # for y in skill_id:
+        #     skills.append(y)
+        job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", str(x))     #TODO: H/H doesn't take from it, why?
         for y in job_id:
             jobs.append(y)
         # TODO: (L/L) add experiences
