@@ -75,6 +75,7 @@ def read_listing(listing, db):
     projects = []
     skills = []
     jobs = []
+    experiences = []
     keys = set(read(listing, db))
     for x in keys:
         # project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", str(x))
@@ -86,8 +87,12 @@ def read_listing(listing, db):
         job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", str(x))     #TODO: H/H doesn't take from it, why?
         for y in job_id:
             jobs.append(y)
-        # TODO: (L/L) add experiences
-    return projects, skills, jobs
+        exp_id = db.execute("SELECT id FROM experiences WHERE key_id = ?", str(x))
+        for y in exp_id:
+            exp_data = db.execute("SELECT job_id FROM experiences WHERE key_id = ?", str(x))
+            experiences.append([exp_id, exp_data])
+
+    return projects, skills, jobs, experiences
 
 
 def build_resume(project_ids, skill_ids, job_ids, db):
