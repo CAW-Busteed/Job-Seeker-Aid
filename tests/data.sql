@@ -18,6 +18,7 @@ INSERT INTO synonyms VALUES ('2', 'copywriter');
 INSERT INTO synonyms VALUES ('2', 'editor');
 INSERT INTO synonyms VALUES ('2', 'edit');
 INSERT INTO synonyms VALUES ('2', 'editing');
+INSERT INTO synonyms VALUES ('2', 'narrative');
 INSERT INTO synonyms VALUES ('2', 'copywriting');
 INSERT INTO synonyms VALUES ('2', 'writer');
 INSERT INTO synonyms VALUES ('2', 'news');
