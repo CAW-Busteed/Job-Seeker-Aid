@@ -83,5 +83,17 @@ def test_build_resume(db):
     listing = 'The experience is designed to expose candidates to all facets of Cosm Studios and X Labs, as well as key collaborations across the company, providing the opportunity to connect with creators in the virtual reality space, write-up copy for company communications based on experiences, research, and industry reports, and generate copy for social media and projects in development. For the right person, this is a dream position to develop your narrative voice and increase your knowledge of the immersive entertainment and experiential industry. Our hope is following a successful internship this can lead to an offer of full-time employment.'
     db_main.add_job_history(job, start, end, zexperiences, db)
     project_ids, skill_ids, job_ids, experiences = db_main.read_listing(listing, db)
-    skills, jobs, experiences, projects = db_main.build_resume(project_ids, skill_ids, job_ids, db)
+    skills, jobs, nexperiences, projects = db_main.build_resume(project_ids, skill_ids, job_ids, experiences, db)
     assert jobs[0][0]['job'] == job
+
+def test_build_resume1(db):
+    job="Assistant Editor"
+    start="March 2010"
+    end="May 2014"
+    zexperiences= ["Organized layouts and structure of the Boston Tribune Newsletter.", "Authored over 300 pages of content over my career.", "Took steps to move onto a digital format."]
+    listing = 'The experience is designed to expose candidates to all facets of Cosm Studios and X Labs, as well as key collaborations across the company, providing the opportunity to connect with creators in the virtual reality space, write-up copy for company communications based on experiences, research, and industry reports, and generate copy for social media and projects in development. For the right person, this is a dream position to develop your narrative voice and increase your knowledge of the immersive entertainment and experiential industry. Our hope is following a successful internship this can lead to an offer of full-time employment.'
+    db_main.add_job_history(job, start, end, zexperiences, db)
+    project_ids, skill_ids, job_ids, experiences = db_main.read_listing(listing, db)
+    skills, jobs, nexperiences, projects = db_main.build_resume(project_ids, skill_ids, job_ids, experiences, db)
+    print(nexperiences)
+    assert zexperiences[0] == nexperiences[0][0]['summary']

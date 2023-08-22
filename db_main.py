@@ -8,6 +8,7 @@ from flask import Flask, flash, redirect, render_template
 # positive = ['y', 'yes']
 # negative = ['n', 'no']
 
+#This set of functions builds a user's database of qualifications
 #find the connecting key terms
 def iterate_keys(term, db):
     word = term.lower()
@@ -15,7 +16,7 @@ def iterate_keys(term, db):
     if len(key_id) == 0:
         key_id = db.execute('SELECT id FROM keywords where key = ?', word)
         if len(key_id) == 0:
-            #TODO:(L/M) Give option to add keys
+            #TODO:L/L create function for user to add keys and synonyms, L because it can be done from the db
             print('no variables to pull key')
             return False
     return key_id
@@ -74,32 +75,37 @@ def add_skills(skill, db):
     db.execute("INSERT INTO skills (skill, key_id) VALUES (?, ?)", skill, key_id)
     return True
 
+
+#The following functions are to build from the database
 # Read job listing
 def read_listing(listing, db):
     projects = []
     skills = []
     jobs = []
     experiences = []
-    keys = set(read(listing, db))
+    keys = set(read(listing, db))       #TODO: M/M set disorganizes, consider just counting most common of each in read()
     for x in keys:
         # project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", str(x))
         # for y in project_id:
         #     projects.append(y)
+
         # skill_id = db.execute("SELECT id FROM skills WHERE key_id = ?", str(x))
         # for y in skill_id:
         #     skills.append(y)
+
         job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", str(x))
         for y in job_id:
             jobs.append(y['id'])
-        # exp_id = db.execute("SELECT id FROM experiences WHERE key_id = ?", str(x))
-        # for y in exp_id:
-        #     exp_data = db.execute("SELECT job_id FROM experiences WHERE key_id = ?", str(x))
-        #     experiences.append([exp_id, exp_data])
+        
+        exp_id = db.execute("SELECT id FROM experiences WHERE key_id = ?", str(x))
+        for y in exp_id:
+            exp_data = db.execute("SELECT job_id FROM experiences WHERE key_id = ?", str(x))
+            experiences.append([y, exp_data])
 
     return projects, skills, jobs, experiences
 
 
-def build_resume(project_ids, skill_ids, job_ids, db):
+def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
     #TODO: (M/M) the following loops iterate over last, edit so it adds onto it instead
     skills=[]
     jobs =[]
@@ -122,16 +128,24 @@ def build_resume(project_ids, skill_ids, job_ids, db):
             experience = db.execute("SELECT summary FROM experiences WHERE job_id = ?", str(x))
             jobs.append(job)
             experiences.append(experience)
-
     
+    #relevant experiences, tie in jobs
+    if len(exp_id)>0:
+        for x in exp_id:
+            job = db.execute("SELECT job, start_date, end_date FROM jobs WHERE id = ?", str(x[1]))
+            experience = db.execute("SELECT summary FROM experiences WHERE job_id = ?", str(x[0]))
+            if job not in jobs:
+                jobs.append(job)
+            if experience not in experiences:
+                experiences.append(experience)
 
     #return render_template("resume_inf.html", skills = skills, jobs = jobs, experiences = experiences, projects = projects)
     #TODO: M/H figure out how to output HTML from app
     return skills, jobs, experiences, projects
 
 def output_resume(desc, db):
-    projects, skills, jobs = read_listing(desc, db)
-    build_resume(projects, skills, jobs, db)
+    projects, skills, jobs, experiences = read_listing(desc, db)
+    build_resume(projects, skills, jobs, experiences, db)
 
 def build_coverletter():        #not in use yet
     #take a frame
