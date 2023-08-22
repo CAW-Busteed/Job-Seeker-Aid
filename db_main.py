@@ -88,7 +88,7 @@ def read_listing(listing, db):
         # skill_id = db.execute("SELECT id FROM skills WHERE key_id = ?", str(x))
         # for y in skill_id:
         #     skills.append(y)
-        job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", str(x))     #TODO: H/H doesn't take from it, why?
+        job_id = db.execute("SELECT id FROM jobs WHERE key_id = ?", str(x))
         for y in job_id:
             jobs.append(y['id'])
         # exp_id = db.execute("SELECT id FROM experiences WHERE key_id = ?", str(x))

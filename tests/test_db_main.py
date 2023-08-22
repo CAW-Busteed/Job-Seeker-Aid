@@ -84,5 +84,4 @@ def test_build_resume(db):
     db_main.add_job_history(job, start, end, zexperiences, db)
     project_ids, skill_ids, job_ids, experiences = db_main.read_listing(listing, db)
     skills, jobs, experiences, projects = db_main.build_resume(project_ids, skill_ids, job_ids, db)
-    occ = db.execute("SELECT job FROM jobs WHERE id=?", jobs)
-    assert occ == job
+    assert jobs[0][0]['job'] == job
