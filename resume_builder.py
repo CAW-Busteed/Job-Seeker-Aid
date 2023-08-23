@@ -7,10 +7,10 @@ from cs50 import SQL
 db = SQL("sqlite:///jobsheet.db")
 
 #app frame
-app = tk.Tk()
+# app = tk.Tk()
 # app = tkApp()
-app.geometry("1480x960")
-app.title("Resume Builder")
+# app.geometry("1480x960")
+# app.title("Resume Builder")
 
 TITLE = ("Calibri", 25)
 
@@ -21,7 +21,7 @@ class tkinterApp(tk.Tk):
          
         # __init__ function for class Tk
         tk.Tk.__init__(app, *args, **kwargs)
-         
+
         # creating a container
         container = tk.Frame(app) 
         container.pack(side = "top", fill = "both", expand = True)
@@ -32,8 +32,7 @@ class tkinterApp(tk.Tk):
         # initializing frames to an empty array
         app.frames = {} 
   
-        # iterating through a tuple consisting
-        # of the different page layouts
+        # iterating through a tuple consisting of the different page layouts
         for F in (StartPage, Page1):
   
             frame = F(container, app)
@@ -60,8 +59,9 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(app, parent)
          
         instruct = ttk.Label(app, text= "Set up profile")
-        instruct.grid(row=0, column=1, padx=20, pady=20)
+        instruct.grid(row=0, column=1 , padx=20, pady=20)
 
+        #frame 1 for job input
         #input
         job = tk.StringVar()
         start_date=tk.StringVar()
@@ -73,17 +73,15 @@ class StartPage(tk.Frame):
         # startmonth= tk.StringVar()
 
         #job input fields
-        link_1=ttk.Entry(app, width=400, textvariable=job)
+        link_1=ttk.Entry(app, width=50, textvariable=job)
         position = ttk.Label(app, text= "Job Title: ")
-        link_2=ttk.Entry(app, width=140, textvariable=start_date)
-        #startmonth_drop = OptionMenu(app, startmonth, "January", "Febrary", "March", "April", "May",...)
-        #startyear_drop = OptionMenu()
-        #endmonth_drop = OptionMenu()
-        #startyear_drop = OptionMenu()
+
+        link_2=ttk.Entry(app, width=40, textvariable=start_date)
         position2 =  ttk.Label(app, text= "Start Date: ")
-        link_3=ttk.Entry(app, width=140, textvariable=end_date)
+
+        link_3=ttk.Entry(app, width=40, textvariable=end_date)
         position3 =  ttk.Label(app, text= "End Date: ")
-        #TODO: L/M change date input fields to drop downs. 'OptionMenu' not working
+        #TODO: L/M change date input fields to drop downs.
 
         link_1.grid(row=1, column=1, padx=20, pady=20)
         position.grid(row=1, column=0, padx=20, pady=20)
@@ -93,28 +91,29 @@ class StartPage(tk.Frame):
         position3.grid(row=1, column=4, padx=20, pady=20)
 
         #big experience input field
-        add_experience = ttk.Entry(app, width=400, textvariable=exp)
-        position4 =  ttk.Label(app, text= "Add experiences, use action verbs: ")
-        add_experience.grid(row=2, column=1, padx=20, pady=20)
+        add_experience = ttk.Entry(app, width=160, textvariable=exp)
+        position4 =  ttk.Label(app, text= "Add experience, use action verbs: ")
+        add_experience.grid(row=2, column=1, padx=20, pady=20, columnspan= 4)
         position4.grid(row=2, column=0, padx=20, pady=20)
 
         #buttons for this section
         exp_place = []
         try:
-            exp_button = ttk.Button(app, text="Add Experience", command=exp_place.append(exp))
+            exp_button = ttk.Button(app, text="Add", command=exp_place.append(exp))
         except Exception as e:
-            print("Error in db_main:", e)
+            print("Error in db_main, exp:", e)
 
-        exp_button.grid(row=2, column=2, padx=20, pady=20)
+        exp_button.grid(row=2, column=5, padx=20, pady=20)
 
+        #button to add all that to db
         try:
             job_button = ttk.Button(app, text="Add Job", command= db_main.add_job_history(job, start_date, end_date, exp_place, db))
             job_button.grid(row=3, column=2, padx=20, pady=20)
         except Exception as e:
-            print("Error in db_main:", e)
+            print("Error in db_main, job:", e)
 
         
-
+        #frame 2 for skills/projects input
         '''
         #smaller input fields for skills and projects
         add_skill=ttk.Entry(app, width=100, height= 40, placeholder_text="Skill", textvariable=skill)
@@ -134,6 +133,8 @@ class StartPage(tk.Frame):
         finish_button = ttk.Button(app, "Finished", command=switch())
         finish_button.pack()
         '''
+
+        #outside frame to move to next page
         button1 = ttk.Button(app, text ="Craft Custom Job Features",
         command = lambda : controller.show_frame(Page1))
 
@@ -168,10 +169,10 @@ class Page1(tk.Frame):
         description.grid(row=2, column=1, padx=20, pady=20)
 
         try:
-            description_button=ttk.Button(app, "Submit", command=db_main.output_resume(job_description, db))
+            description_button=ttk.Button(app, "Submit", command=db_main.output_resume(job_description, db))    #TODO: L/M job_desc is empty: 'object has no attribute 'split''
             description_button.grid(row=3, column=1, padx=20, pady=20)
         except Exception as e:
-            print("Error in db_main:", e)
+            print("Error in db_main, full:", e)
         
 
 #run app
