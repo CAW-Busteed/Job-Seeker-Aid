@@ -1,9 +1,15 @@
-insert skills and job history into program
-store information in databases
-Read job listing
 connect keywords to db
 return relevant phrases
 input phrases in choice of three documents
     resume
     cover letter
     thank you letter
+
+Update portfolio
+    wireframes, diagrams, infographics
+    images of prev jobs
+
+Finish project:
+    brush up flask for HTML output
+    dimishing returns, satisfy with resume exp/jobs
+
