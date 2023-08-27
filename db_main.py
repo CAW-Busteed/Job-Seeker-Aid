@@ -61,9 +61,9 @@ def add_projects(job_id, job, project, description, db):      #not in use yet
         db.execute("INSERT INTO projects (project, explanation, job_id, key_id) VALUES (?, ?, ?, ?)", project, description, job_id, str(key_id[0]))
     return True
 
-def add_job_history(job, start, end, experiences, db):
+def add_job_history(job, location, start, end, experiences, db):
     #input into TABLE:jobs via sql
-    db.execute("INSERT INTO jobs (job, start_date, end_date) VALUES (?, ?, ?)", job, start, end)
+    db.execute("INSERT INTO jobs (job, location, start_date, end_date) VALUES (?, ?, ?)", job, location, start, end)
     job_id = str((db.execute("SELECT id FROM jobs WHERE job= ?", job))[0]["id"])
     job_key = read(job, db)
     if len(job_key)==1:
@@ -132,7 +132,7 @@ def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
     #relevant job history + experiences
     if len(job_ids)>0:
         for x in job_ids:
-            job = db.execute("SELECT job, start_date, end_date FROM jobs WHERE id = ?", str(x))
+            job = db.execute("SELECT job, location, start_date, end_date FROM jobs WHERE id = ?", str(x))
             experience = db.execute("SELECT summary FROM experiences WHERE job_id = ?", str(x))
             jobs.append(job)
             experiences.append(experience)
@@ -140,7 +140,7 @@ def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
     #relevant experiences, tie in jobs
     if len(exp_id)>0:
         for x in exp_id:
-            job = db.execute("SELECT job, start_date, end_date FROM jobs WHERE id = ?", str(x[1]))
+            job = db.execute("SELECT job, location, start_date, end_date FROM jobs WHERE id = ?", str(x[1]))
             experience = db.execute("SELECT summary FROM experiences WHERE job_id = ?", str(x[0]))
             if job not in jobs:
                 jobs.append(job)
@@ -149,9 +149,9 @@ def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
     return skills, jobs, experiences, projects
 
 def output_resume(desc, db):
-    projects, skills, jobs, experiences = read_listing(desc, db)
-    build_resume(projects, skills, jobs, experiences, db)
-    #return render_template("resume_inf.html", skills = skills, jobs = jobs, experiences = experiences, projects = projects)
+    proj_fit, skill_fit, job_fit, exp_fit = read_listing(desc, db)
+    skills, jobs, experiences, projects = build_resume(proj_fit, skill_fit, job_fit, exp_fit, db)
+    return render_template("resume_inf.html", skills = skills, jobs = jobs, experiences = experiences, projects = projects)
     #TODO: H/M Flask HTML template
 
 def build_coverletter():        #not in use yet

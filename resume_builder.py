@@ -12,9 +12,9 @@ if (db.execute("SELECT * FROM keywords") == None):
     db_main.exec_script("data.sql", db)
 
 #app frame
-# app = tk.Tk()
-# app.geometry("1480x960")
-# app.title("Resume Builder")
+# root = tk.Tk()
+# root.geometry("1480x960")
+# root.title("Resume Builder")
 
 TITLE = ("Calibri", 25)
 
@@ -67,6 +67,7 @@ class StartPage(tk.Frame):
         #frame 1 for job input
         #input
         job = tk.StringVar()
+        location = tk.StringVar()
         start_date=tk.StringVar()
         end_date=tk.StringVar()
         exp=tk.StringVar()
@@ -76,8 +77,12 @@ class StartPage(tk.Frame):
         # startmonth= tk.StringVar()
 
         #job input fields
-        link_1=ttk.Entry(app, width=50, textvariable=job)
+        link_0=ttk.Entry(app, width=50, textvariable=job)
         position = ttk.Label(app, text= "Job Title: ")
+
+        #TODO: fix scaling
+        link_1=ttk.Entry(app, width=50, textvariable=location)
+        position1 = ttk.Label(app, text= "Location:")
 
         link_2=ttk.Entry(app, width=40, textvariable=start_date)
         position2 =  ttk.Label(app, text= "Start Date: ")
@@ -86,12 +91,14 @@ class StartPage(tk.Frame):
         position3 =  ttk.Label(app, text= "End Date: ")
         #TODO: L/M change date input fields to drop downs.
 
-        link_1.grid(row=1, column=1, padx=5, pady=5)
+        link_0.grid(row=1, column=1, padx=5, pady=5)
         position.grid(row=1, column=0, padx=5, pady=5)
-        link_2.grid(row=1, column=3, padx=5, pady=5)
-        position2.grid(row=1, column=2, padx=5, pady=5)
-        link_3.grid(row=1, column=5, padx=5, pady=5)
-        position3.grid(row=1, column=4, padx=5, pady=5)
+        link_1.grid(row=1, column=3, padx=5, pady=5)
+        position1.grid(row=1, column=2, padx=5, pady=5)
+        link_2.grid(row=1, column=5, padx=5, pady=5)
+        position2.grid(row=1, column=4, padx=5, pady=5)
+        link_3.grid(row=1, column=7, padx=5, pady=5)
+        position3.grid(row=1, column=6, padx=5, pady=5)
 
         #big experience input field
         add_experience = ttk.Entry(app, width=160, textvariable=exp)
@@ -99,7 +106,7 @@ class StartPage(tk.Frame):
         add_experience.grid(row=2, column=1, padx=5, pady=5, columnspan= 4)
         position4.grid(row=2, column=0, padx=5, pady=5)
 
-        #buttons for this section
+        #button to add experiences
         exp_place = []
         try:
             exp_button = ttk.Button(app, text="Add", command= lambda: exp_place.append(exp.get()))
@@ -108,12 +115,22 @@ class StartPage(tk.Frame):
 
         exp_button.grid(row=2, column=5, padx=5, pady=5)
 
+        # Define a function to handle the job addition
+        def add_job():
+            job_info = [job.get(), location.get(), start_date.get(), end_date.get()]
+            db_main.add_job_history(job_info[0], job_info[1], job_info[2], exp_place, db)
+            # Reset lists
+            job_info.clear()
+            exp_place.clear()
+        
+        #TODO: fix the scaling, have the input boxes reset, wrapi it up, presentation
+
         #button to add all that to db
         try:
-            job_button = ttk.Button(app, text="Add Job", command= lambda: db_main.add_job_history(job, start_date, end_date, exp_place, db))
-            job_button.grid(row=3, column=2, padx=5, pady=5)
+            job_button = ttk.Button(app, text="Add Job", command= lambda: add_job())
+            job_button.grid(row=3, column=2, padx=5, pady=5)       
         except Exception as e:
-            print("Error in db_main, job:", e)      #TODO: H/M returns error unsupported value: PY_VAR0
+            print("Error in db_main, job:", e)
 
         
         #frame 2 for skills/projects input
@@ -172,7 +189,7 @@ class Page1(tk.Frame):
         description.grid(row=2, column=1, padx=5, pady=5)
 
         try:
-            description_button=ttk.Button(app, text= "Submit", command= lambda: db_main.output_resume(job_description, db))    #TODO: H/M job_desc is empty: 'object has no attribute 'split''
+            description_button=ttk.Button(app, text="Submit", command= lambda: db_main.output_resume(job_description, db))
             description_button.grid(row=3, column=1, padx=5, pady=5)
         except Exception as e:
             print("Error in db_main, full:", e)

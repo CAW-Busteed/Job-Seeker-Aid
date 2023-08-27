@@ -13,15 +13,15 @@
     <h3>Skills</h3>
     <tr>
         {% for skills in skills %}
-        <td>{{skills.soft_skills}}</td>
-        <!--<td>{{skills.hard_skills}}</td>--->
+        <td>{{skills.skill}}</td>
         {% end for %}
     </tr>
 
     <h3>Job History</h3>
     {% for jobs in jobs %}
     <h5>{{jobs.job}}</h5>
-    <h6>{{jobs.start_date}} to {{jobs.end_date}}</h6>
+    <h6>{{jobs.location}}</h6>
+    <h7>{{jobs.start_date}} to {{jobs.end_date}}</h7>
     <tr>
         {% for experiences in experiences %}
         <td>{{experiences.summary}}</td>
