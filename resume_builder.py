@@ -62,7 +62,7 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(app, parent)
          
         instruct = ttk.Label(app, text= "Set up profile")
-        instruct.grid(row=0, column=1 , padx=5, pady=5)
+        instruct.grid(row=0, column=1 , padx=2, pady=2)
 
         #frame 1 for job input
         #input
@@ -77,62 +77,72 @@ class StartPage(tk.Frame):
         # startmonth= tk.StringVar()
 
         #job input fields
-        link_0=ttk.Entry(app, width=50, textvariable=job)
+        link_0=ttk.Entry(app, width=30, textvariable=job)
         position = ttk.Label(app, text= "Job Title: ")
 
-        #TODO: fix scaling
-        link_1=ttk.Entry(app, width=50, textvariable=location)
+        #TODO: FINAL: fix scaling, update db to include location, set boxes [Update profile[job[exp]][projects][skills]]
+        link_1=ttk.Entry(app, width=30, textvariable=location)
         position1 = ttk.Label(app, text= "Location:")
 
-        link_2=ttk.Entry(app, width=40, textvariable=start_date)
+        link_2=ttk.Entry(app, width=20, textvariable=start_date)
         position2 =  ttk.Label(app, text= "Start Date: ")
 
-        link_3=ttk.Entry(app, width=40, textvariable=end_date)
+        link_3=ttk.Entry(app, width=20, textvariable=end_date)
         position3 =  ttk.Label(app, text= "End Date: ")
         #TODO: L/M change date input fields to drop downs.
 
-        link_0.grid(row=1, column=1, padx=5, pady=5)
-        position.grid(row=1, column=0, padx=5, pady=5)
-        link_1.grid(row=1, column=3, padx=5, pady=5)
-        position1.grid(row=1, column=2, padx=5, pady=5)
-        link_2.grid(row=1, column=5, padx=5, pady=5)
-        position2.grid(row=1, column=4, padx=5, pady=5)
-        link_3.grid(row=1, column=7, padx=5, pady=5)
-        position3.grid(row=1, column=6, padx=5, pady=5)
+        link_0.grid(row=1, column=1, padx=2, pady=2)
+        position.grid(row=1, column=0, padx=2, pady=2)
+        link_1.grid(row=1, column=3, padx=2, pady=2)
+        position1.grid(row=1, column=2, padx=2, pady=2)
+        link_2.grid(row=1, column=5, padx=2, pady=2)
+        position2.grid(row=1, column=4, padx=2, pady=2)
+        link_3.grid(row=1, column=7, padx=2, pady=2)
+        position3.grid(row=1, column=6, padx=2, pady=2)
 
         #big experience input field
         add_experience = ttk.Entry(app, width=160, textvariable=exp)
         position4 =  ttk.Label(app, text= "Add experience, use action verbs: ")
-        add_experience.grid(row=2, column=1, padx=5, pady=5, columnspan= 4)
-        position4.grid(row=2, column=0, padx=5, pady=5)
+        add_experience.grid(row=2, column=1, padx=2, pady=2, columnspan= 5)
+        position4.grid(row=2, column=0, padx=2, pady=2)
 
         #button to add experiences
         exp_place = []
+        def job_exp():
+            # list.append(var.get())
+            exp_place.append(exp.get())
+            add_experience.delete(0, 'end')
+               
         try:
-            exp_button = ttk.Button(app, text="Add", command= lambda: exp_place.append(exp.get()))
+            exp_button = ttk.Button(app, text="Add", command= lambda: job_exp())
         except Exception as e:
             print("Error in db_main, exp:", e)
 
-        exp_button.grid(row=2, column=5, padx=5, pady=5)
+        exp_button.grid(row=2, column=7, padx=2, pady=2)
 
         # Define a function to handle the job addition
         def add_job():
             job_info = [job.get(), location.get(), start_date.get(), end_date.get()]
             db_main.add_job_history(job_info[0], job_info[1], job_info[2], exp_place, db)
+
+            #reset entry fields
+            link_0.delete(0, 'end')
+            link_1.delete(0, 'end')
+            link_2.delete(0, 'end')
+            link_3.delete(0, 'end')
+
             # Reset lists
             job_info.clear()
             exp_place.clear()
         
-        #TODO: fix the scaling, have the input boxes reset, wrapi it up, presentation
-
         #button to add all that to db
         try:
             job_button = ttk.Button(app, text="Add Job", command= lambda: add_job())
-            job_button.grid(row=3, column=2, padx=5, pady=5)       
+            job_button.grid(row=3, column=2, padx=2, pady=2)       
         except Exception as e:
             print("Error in db_main, job:", e)
 
-        
+
         #frame 2 for skills/projects input
         '''
         #smaller input fields for skills and projects
@@ -160,7 +170,7 @@ class StartPage(tk.Frame):
 
         # putting the button in its place by
         # using grid
-        button1.grid(row = 5, column = 1, padx = 2, pady = 3)
+        button1.grid(row = 5, column = 1, padx = 0, pady = 1)
   
 # second window frame page1
 class Page1(tk.Frame):
@@ -169,7 +179,7 @@ class Page1(tk.Frame):
          
         tk.Frame.__init__(app, parent)
         label = ttk.Label(app, text ="Build Job Application", font = TITLE)
-        label.grid(row = 0, column = 2, padx = 4, pady = 4)
+        label.grid(row = 0, column = 2, padx = 1, pady = 1)
   
         # button to show frame 2 with text
         # layout2
@@ -178,15 +188,15 @@ class Page1(tk.Frame):
      
         # putting the button in its place
         # by using grid
-        button1.grid(row = 1, column = 1, padx = 4, pady = 4)
+        button1.grid(row = 1, column = 1, padx = 1, pady = 1)
         
         #Instruction
         instruct = ttk.Label(app, text= "Paste Job Description")
-        instruct.grid(row=2, column=0, padx=5, pady=5)
+        instruct.grid(row=2, column=0, padx=2, pady=2)
 
         job_description= tk.StringVar()
         description=ttk.Entry(app, width=200, textvariable=job_description)
-        description.grid(row=2, column=1, padx=5, pady=5)
+        description.grid(row=2, column=1, padx=2, pady=2)
 
         try:
             description_button=ttk.Button(app, text="Submit", command= lambda: db_main.output_resume(job_description, db))

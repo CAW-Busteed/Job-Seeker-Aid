@@ -24,7 +24,6 @@ def iterate_keys(term, db):
     if len(key_id) == 0:
         key_id = db.execute('SELECT id FROM keywords where key = ?', word)
         if len(key_id) == 0:
-            #TODO:L/L create function for user to add keys and synonyms, L because it can be done from the db
             return False
     return key_id
 
@@ -63,7 +62,7 @@ def add_projects(job_id, job, project, description, db):      #not in use yet
 
 def add_job_history(job, location, start, end, experiences, db):
     #input into TABLE:jobs via sql
-    db.execute("INSERT INTO jobs (job, location, start_date, end_date) VALUES (?, ?, ?)", job, location, start, end)
+    db.execute("INSERT INTO jobs (job, location, start_date, end_date) VALUES (?, ?, ?, ?)", job, location, start, end)
     job_id = str((db.execute("SELECT id FROM jobs WHERE job= ?", job))[0]["id"])
     job_key = read(job, db)
     if len(job_key)==1:
