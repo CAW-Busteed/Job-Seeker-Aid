@@ -11,10 +11,7 @@ db = SQL("sqlite:///jobsheet.db")
 if (db.execute("SELECT * FROM keywords") == None):
     db_main.exec_script("data.sql", db)
 
-#app frame
-# root = tk.Tk()
-# root.geometry("1480x960")
-# root.title("Resume Builder")
+
 
 TITLE = ("Calibri", 25)
 
@@ -25,6 +22,7 @@ class tkinterApp(tk.Tk):
          
         # __init__ function for class Tk
         tk.Tk.__init__(app, *args, **kwargs)
+        app.title("Resume Builder")
 
         # creating a container
         container = tk.Frame(app) 
@@ -61,8 +59,8 @@ class StartPage(tk.Frame):
     def __init__(app, parent, controller):
         tk.Frame.__init__(app, parent)
          
-        instruct = ttk.Label(app, text= "Set up profile")
-        instruct.grid(row=0, column=1 , padx=2, pady=2)
+        instruct = ttk.Label(app, text= "Set up profile", font=TITLE)
+        instruct.grid(row=0, column=3, padx=2, pady=2)
 
         #frame 1 for job input
         #input
@@ -74,13 +72,12 @@ class StartPage(tk.Frame):
         # skill= tk.StringVar()
         # project= tk.StringVar() #add option to connect to job
         # project_desc= tk.StringVar()
-        # startmonth= tk.StringVar()
 
         #job input fields
         link_0=ttk.Entry(app, width=30, textvariable=job)
         position = ttk.Label(app, text= "Job Title: ")
 
-        #TODO: FINAL: fix scaling, update db to include location, set boxes [Update profile[job[exp]][projects][skills]]
+        #TODO: FINAL: set boxes [Update profile[job[exp]][projects][skills]] and test
         link_1=ttk.Entry(app, width=30, textvariable=location)
         position1 = ttk.Label(app, text= "Location:")
 
@@ -89,7 +86,7 @@ class StartPage(tk.Frame):
 
         link_3=ttk.Entry(app, width=20, textvariable=end_date)
         position3 =  ttk.Label(app, text= "End Date: ")
-        #TODO: L/M change date input fields to drop downs.
+        #TODO: L/M change date input fields to drop downs/calendar widgets.
 
         link_0.grid(row=1, column=1, padx=2, pady=2)
         position.grid(row=1, column=0, padx=2, pady=2)
@@ -146,30 +143,25 @@ class StartPage(tk.Frame):
         #frame 2 for skills/projects input
         '''
         #smaller input fields for skills and projects
-        add_skill=ttk.Entry(app, width=100, height= 40, placeholder_text="Skill", textvariable=skill)
-        add_project=ttk.Entry(app, width=100, height= 40, placeholder_text="Project", textvariable=project)
-        add_project_desc=ttk.Entry(app, width=100, height= 90, placeholder_text="Description of Project", textvariable=project_desc)
+        add_skill=ttk.Entry(app, textvariable=skill)
+        add_project=ttk.Entry(app, textvariable=project)
+        add_project_desc=ttk.Entry(app, textvariable=project_desc)
         add_skill.pack()
         add_project.pack()
         add_project_desc.pack()
 
         #add buttons
-        project_button=ttk.Button(app, "Add Project", command=db_main.add_projects(project, project_desc))
+        project_button=ttk.Button(app, "Add Project", command= lambda: db_main.add_projects(project, project_desc))
         project_button.pack()
 
-        skill_button=ttk.Button(app, "Add Skill", command=db_main.add_skills(skill))
+        skill_button=ttk.Button(app, "Add Skill", command= lambda: db_main.add_skills(skill))
         skill_button.pack()
-
-        finish_button = ttk.Button(app, "Finished", command=switch())
-        finish_button.pack()
         '''
 
         #outside frame to move to next page
-        button1 = ttk.Button(app, text ="Craft Custom Job Features",
-        command = lambda : controller.show_frame(Page1))
+        button1 = ttk.Button(app, text ="Craft Custom Job Features", command = lambda : controller.show_frame(Page1))
 
-        # putting the button in its place by
-        # using grid
+        # putting the button in its place by using grid
         button1.grid(row = 5, column = 1, padx = 0, pady = 1)
   
 # second window frame page1

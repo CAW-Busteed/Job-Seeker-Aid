@@ -30,7 +30,9 @@ def iterate_keys(term, db):
 #read a document to find terms
 def read(text, db):
     keys = []
-    
+    if text != string:
+        print('No Variable')
+
     res = [word.strip(string.punctuation) for word in text.split() if word.strip(string.punctuation).isalnum()]
     for word in res:
         key_id = iterate_keys(word, db)
