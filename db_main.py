@@ -1,13 +1,8 @@
 import os
 from cs50 import SQL
 import string
-import sqlite3
 from statistics import mode
-from flask import Flask, flash, redirect, render_template
-
-#Set globals
-# positive = ['y', 'yes']
-# negative = ['n', 'no']
+from fpdf import FPDF
 
 #execute sql
 def exec_script(sqlFile, db):
@@ -30,7 +25,7 @@ def iterate_keys(term, db):
 #read a document to find terms
 def read(text, db):
     keys = []
-    if text != string:
+    if text == None:
         print('No Variable')
 
     res = [word.strip(string.punctuation) for word in text.split() if word.strip(string.punctuation).isalnum()]
@@ -42,14 +37,24 @@ def read(text, db):
                     keys.append(key_id[x]['key_id'])
                 elif 'id' in key_id[x]:
                     keys.append(key_id[x]['id'])
-    #TODO:(M/L) account for duplicates or more common keys ^
+    if keys == []:
+        #if nothing applies, 0 as a id placeholder
+        keys.append(0)
     return keys
 
 # insert skills and job history into program
 def connect_experiences(experiences, db):
     key = []
     for x in experiences:
-        key.append(read(x, db)[0])
+        results = read(x, db)
+        if mode(results)!=0:
+            key.append(mode(results))
+        else:
+            results.remove(0)
+            if len(results)>0:
+                key.append(mode(results))
+            else:
+                key.append(0)
     return key        
 
 def add_projects(job_id, job, project, description, db):      #not in use yet
@@ -63,20 +68,26 @@ def add_projects(job_id, job, project, description, db):      #not in use yet
     return True
 
 def add_job_history(job, location, start, end, experiences, db):
-    #input into TABLE:jobs via sql
-    db.execute("INSERT INTO jobs (job, location, start_date, end_date) VALUES (?, ?, ?, ?)", job, location, start, end)
-    job_id = str((db.execute("SELECT id FROM jobs WHERE job= ?", job))[0]["id"])
-    job_key = read(job, db)
-    if len(job_key)==1:
-        job_key = str(job_key[0])
-        db.execute("UPDATE jobs SET key_id = ? WHERE job = ?", job_key, job)
+    #check if the job is already there first!
+    check_job = db.execute("SELECT job FROM jobs WHERE job = ?", job)
+    check_loc = db.execute("SELECT location FROM jobs WHERE location = ?", location)
 
-    #input string and job_id into TABLE: experiences
-    key = connect_experiences(experiences, db)
-    if len(key) == len(experiences):
-        for x in range(len(experiences)):
-            db.execute("INSERT INTO experiences (job_id, summary, key_id) VALUES (?, ?, ?)", job_id, experiences[x], str(key[x]))
-
+    if len(check_job) == 0 and len(check_loc) == 0:
+        #input into TABLE:jobs via sql
+        db.execute("INSERT INTO jobs (job, location, start_date, end_date) VALUES (?, ?, ?, ?)", job, location, start, end)
+        job_id = str((db.execute("SELECT id FROM jobs WHERE job= ?", job))[0]["id"])
+        job_key = read(job, db)
+        if len(job_key)==1:
+            job_key = str(job_key[0])
+            db.execute("UPDATE jobs SET key_id = ? WHERE job = ?", job_key, job)
+        
+        #input string and job_id into TABLE: experiences
+        key = connect_experiences(experiences, db)
+        if len(key) == len(experiences):
+            for x in range(len(experiences)):
+                db.execute("INSERT INTO experiences (job_id, summary, key_id) VALUES (?, ?, ?)", job_id, experiences[x], str(key[x]))
+    elif len(check_job) > 0 and len(check_loc) > 0:
+        print('Job already exists')
 
 def add_skills(skill, db):
     key_id = read(skill, db)
@@ -91,7 +102,7 @@ def read_listing(listing, db):
     skills = []
     jobs = []
     experiences = []
-    keys = set(read(listing, db))       #TODO: M/M set disorganizes, consider just counting most common of each in read()
+    keys = read(listing, db)       # M/M set disorganizes, consider just counting most common of each in read()
     for x in keys:
         project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", str(x))
         if project_id != None:
@@ -141,8 +152,15 @@ def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
     #relevant experiences, tie in jobs
     if len(exp_id)>0:
         for x in exp_id:
-            job = db.execute("SELECT job, location, start_date, end_date FROM jobs WHERE id = ?", str(x[1]))
-            experience = db.execute("SELECT summary FROM experiences WHERE job_id = ?", str(x[0]))
+
+            id =[]
+            for y in x[1]:
+                if y['job_id'] not in id:
+                    id.append(y['job_id'])
+                
+            job = db.execute("SELECT job, location, start_date, end_date FROM jobs WHERE id = ?", str(id[0]))
+            experience = db.execute("SELECT summary FROM experiences WHERE id = ?", str(x[0]['id']))
+
             if job not in jobs:
                 jobs.append(job)
             if experience not in experiences:
@@ -152,19 +170,32 @@ def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
 def output_resume(desc, db):
     proj_fit, skill_fit, job_fit, exp_fit = read_listing(desc, db)
     skills, jobs, experiences, projects = build_resume(proj_fit, skill_fit, job_fit, exp_fit, db)
-    return render_template("resume_inf.html", skills = skills, jobs = jobs, experiences = experiences, projects = projects)
-    #TODO: H/M Flask HTML template
+    content = "Resume\n "
 
-def build_coverletter():        #not in use yet
-    #take a frame
-    #pull more information by lookup of company---------consider function
-    #input necessary info
+    if len(jobs)>0:
+        j_content = "Job History\n"
+        
+        for x in jobs[0]:
+            e_content = "Experiences: \n"
+            for y in experiences:
+                e_content = e_content + f"> {y[0]['summary']}\n"
 
-    pass
+            j_content= j_content + f"{x['job']} \n {x['location']} \n {x['start_date']} to {x['end_date']}\n" + e_content
+            content = content + j_content
+    
+    if len(skills)>0:
+        pass
 
-def build_thanks():             #not in use yet
-    #take a frame
-    #pull information by lookup of company
-    #input necessary info
-    pass
+    if len(projects)>0:
+        pass
 
+    #Create pdf
+    with open("resume.html", "w") as html_file:
+        html_file.write(f"<html><body>{content}</body></html>")
+
+    # Convert to PDF
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size = 12)
+    pdf.multi_cell(0, 10, content)
+    pdf.output("resume.pdf")

@@ -5,15 +5,15 @@ import db_main
 from cs50 import SQL
 
 #define database
-db = SQL("sqlite:///jobsheet.db")
+db = SQL("sqlite:///jobsheet copy.db") #TODO: switch back when done
 
 #populate database with key terms
-if (db.execute("SELECT * FROM keywords") == None):
+if (db.execute("SELECT * FROM keywords") == []):
     db_main.exec_script("data.sql", db)
 
 
 
-TITLE = ("Calibri", 25)
+TITLE = ("Calibri", 20)
 
 class tkinterApp(tk.Tk):
      
@@ -62,6 +62,7 @@ class StartPage(tk.Frame):
         instruct = ttk.Label(app, text= "Set up profile", font=TITLE)
         instruct.grid(row=0, column=3, padx=2, pady=2)
 
+        container1 =tk.Frame(app) 
         #frame 1 for job input
         #input
         job = tk.StringVar()
@@ -77,7 +78,6 @@ class StartPage(tk.Frame):
         link_0=ttk.Entry(app, width=30, textvariable=job)
         position = ttk.Label(app, text= "Job Title: ")
 
-        #TODO: FINAL: set boxes [Update profile[job[exp]][projects][skills]] and test
         link_1=ttk.Entry(app, width=30, textvariable=location)
         position1 = ttk.Label(app, text= "Location:")
 
@@ -86,7 +86,7 @@ class StartPage(tk.Frame):
 
         link_3=ttk.Entry(app, width=20, textvariable=end_date)
         position3 =  ttk.Label(app, text= "End Date: ")
-        #TODO: L/M change date input fields to drop downs/calendar widgets.
+        #TODO: VL/M change date input fields to drop downs/calendar widgets.
 
         link_0.grid(row=1, column=1, padx=2, pady=2)
         position.grid(row=1, column=0, padx=2, pady=2)
@@ -120,7 +120,7 @@ class StartPage(tk.Frame):
         # Define a function to handle the job addition
         def add_job():
             job_info = [job.get(), location.get(), start_date.get(), end_date.get()]
-            db_main.add_job_history(job_info[0], job_info[1], job_info[2], exp_place, db)
+            db_main.add_job_history(job_info[0], job_info[1], job_info[2], job_info[3], exp_place, db)
 
             #reset entry fields
             link_0.delete(0, 'end')
@@ -171,27 +171,30 @@ class Page1(tk.Frame):
          
         tk.Frame.__init__(app, parent)
         label = ttk.Label(app, text ="Build Job Application", font = TITLE)
-        label.grid(row = 0, column = 2, padx = 1, pady = 1)
+        label.grid(row = 0, column = 1, padx = 1, pady = 1)
   
         # button to show frame 2 with text
         # layout2
-        button1 = ttk.Button(app, text ="Add to Profile",
+        button1 = ttk.Button(app, text ="Return to Profile",
                             command = lambda : controller.show_frame(StartPage))
      
         # putting the button in its place
-        # by using grid
         button1.grid(row = 1, column = 1, padx = 1, pady = 1)
         
         #Instruction
-        instruct = ttk.Label(app, text= "Paste Job Description")
+        instruct = ttk.Label(app, text= "Job Description")
         instruct.grid(row=2, column=0, padx=2, pady=2)
 
         job_description= tk.StringVar()
         description=ttk.Entry(app, width=200, textvariable=job_description)
         description.grid(row=2, column=1, padx=2, pady=2)
 
+        def get_resume():
+            db_main.output_resume(job_description.get(), db)
+            description.delete(0, 'end')
+
         try:
-            description_button=ttk.Button(app, text="Submit", command= lambda: db_main.output_resume(job_description, db))
+            description_button=ttk.Button(app, text="Submit", command= lambda: get_resume())
             description_button.grid(row=3, column=1, padx=5, pady=5)
         except Exception as e:
             print("Error in db_main, full:", e)
