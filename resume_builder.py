@@ -3,12 +3,13 @@ from tkinter import ttk
 import db_main
 from cs50 import SQL
 
-#define database
-db = SQL("sqlite:///jobsheet copy.db") #TODO: switch back when done
+#define databases & key terms defined in SQL file
+db = SQL("sqlite:///jobsheet copy.db")
+key_terms = "data.sql"
 
 #populate database with key terms
 if (db.execute("SELECT * FROM keywords") == []):
-    db_main.exec_script("data.sql", db)
+    db_main.exec_script(key_terms, db)
 
 TITLE = ("Calibri", 20)
 
