@@ -1,4 +1,3 @@
-import os
 import tkinter as tk
 from tkinter import ttk
 import db_main
@@ -10,8 +9,6 @@ db = SQL("sqlite:///jobsheet copy.db") #TODO: switch back when done
 #populate database with key terms
 if (db.execute("SELECT * FROM keywords") == []):
     db_main.exec_script("data.sql", db)
-
-
 
 TITLE = ("Calibri", 20)
 
@@ -100,8 +97,8 @@ class StartPage(tk.Frame):
         #big experience input field
         add_experience = ttk.Entry(app, width=160, textvariable=exp)
         position4 =  ttk.Label(app, text= "Add experience, use action verbs: ")
-        add_experience.grid(row=2, column=1, padx=2, pady=2, columnspan= 5)
-        position4.grid(row=2, column=0, padx=2, pady=2)
+        add_experience.grid(row=2, column=1, padx=5, pady=2, columnspan= 5)
+        position4.grid(row=2, column=0, padx=5, pady=2)
 
         #button to add experiences
         exp_place = []
@@ -183,7 +180,7 @@ class Page1(tk.Frame):
         
         #Instruction
         instruct = ttk.Label(app, text= "Job Description")
-        instruct.grid(row=2, column=0, padx=2, pady=2)
+        instruct.grid(row=2, column=0, padx=5, pady=2)
 
         job_description= tk.StringVar()
         description=ttk.Entry(app, width=200, textvariable=job_description)

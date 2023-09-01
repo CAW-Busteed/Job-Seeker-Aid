@@ -1,5 +1,4 @@
 import os
-from cs50 import SQL
 import string
 from statistics import mode
 from fpdf import FPDF
@@ -28,7 +27,8 @@ def read(text, db):
     if text == None:
         print('No Variable')
 
-    res = [word.strip(string.punctuation) for word in text.split() if word.strip(string.punctuation).isalnum()]
+    text1 = text.replace("'", ' ')
+    res = [word.strip(string.punctuation) for word in text1.split() if word.strip(string.punctuation).isalnum()]
     for word in res:
         key_id = iterate_keys(word, db)
         if key_id != False:
@@ -151,18 +151,23 @@ def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
     
     #relevant experiences, tie in jobs
     if len(exp_id)>0:
+        id =[]
+
         for x in exp_id:
 
-            id =[]
+            #get job ids for every relevant experience
             for y in x[1]:
                 if y['job_id'] not in id:
                     id.append(y['job_id'])
-                
-            job = db.execute("SELECT job, location, start_date, end_date FROM jobs WHERE id = ?", str(id[0]))
-            experience = db.execute("SELECT summary FROM experiences WHERE id = ?", str(x[0]['id']))
 
-            if job not in jobs:
-                jobs.append(job)
+            #add job to list
+            for z in id:   
+                job = db.execute("SELECT id, job, location, start_date, end_date FROM jobs WHERE id = ?", str(z))
+                if job not in jobs:
+                    jobs.append(job)
+            
+            #now add experiences
+            experience = db.execute("SELECT job_id, summary FROM experiences WHERE id = ?", str(x[0]['id']))
             if experience not in experiences:
                 experiences.append(experience)
     return skills, jobs, experiences, projects
@@ -170,32 +175,33 @@ def build_resume(project_ids, skill_ids, job_ids, exp_id, db):
 def output_resume(desc, db):
     proj_fit, skill_fit, job_fit, exp_fit = read_listing(desc, db)
     skills, jobs, experiences, projects = build_resume(proj_fit, skill_fit, job_fit, exp_fit, db)
-    content = "Resume\n "
+    content = "Resume\n\nJob History\n\n"
 
-    if len(jobs)>0:
-        j_content = "Job History\n"
-        
-        for x in jobs[0]:
-            e_content = "Experiences: \n"
+    if len(jobs)>0:        
+        for x in jobs:
+            j_content = "-"
+            e_content = "\n"
+
             for y in experiences:
-                e_content = e_content + f"> {y[0]['summary']}\n"
+                if y[0]['job_id'] == x[0]['id']:
+                    e_content = e_content + f"   > {y[0]['summary']}\n"
 
-            j_content= j_content + f"{x['job']} \n {x['location']} \n {x['start_date']} to {x['end_date']}\n" + e_content
-            content = content + j_content
+            j_content= j_content + f"{x[0]['job']} \n  {x[0]['location']} \n  {x[0]['start_date']} to {x[0]['end_date']}\n" + e_content
+            content = content + j_content +"\n"
     
-    if len(skills)>0:
+    if len(skills)>0:   #not used yet
         pass
 
-    if len(projects)>0:
+    if len(projects)>0: #not used yet
         pass
 
-    #Create pdf
-    with open("resume.html", "w") as html_file:
-        html_file.write(f"<html><body>{content}</body></html>")
+    #Create html for later pdf formatting
+    # with open("resume.html", "w") as html_file:
+    #     html_file.write(f"<html><body>{content}</body></html>")
 
     # Convert to PDF
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size = 12)
-    pdf.multi_cell(0, 10, content)
+    pdf.set_font("Times", size = 10)
+    pdf.multi_cell(0, 5, content)
     pdf.output("resume.pdf")
