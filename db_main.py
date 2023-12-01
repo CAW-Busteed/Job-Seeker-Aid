@@ -102,7 +102,9 @@ def read_listing(listing, db):
     skills = []
     jobs = []
     experiences = []
-    keys = read(listing, db)       # M/M set disorganizes, consider just counting most common of each in read()
+    keys = read(listing, db)
+    if keys == [0]:
+        print("Error: no related terms, update key")
     for x in keys:
         project_id = db.execute("SELECT id FROM projects WHERE key_id = ?", str(x))
         if project_id != None:
